@@ -28,4 +28,16 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  geo:
+    address_lookup_service:
+      errors:
+        unavailable_service: Address lookup service is unavailable.
+        internal_error: Internal server error occurred. Please try again later.
+  json_response_helper:
+    internal_error: Internal server error occurred. Please try again later.
+    too_many_requests: Too Many Requests. Try again in %{retry_after} seconds.
+    bad_request: Bad request
+  errors:
+    too_many_requests: Too Many Requests. Try again in %{retry_after} seconds.
+  request_handler:
+    error: "Error fetching data: %{data}"
