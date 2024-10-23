@@ -58,7 +58,7 @@ For example, to debug rails app
 2. execute
 
 ```bash
-bin/attach meteosense-api-1
+bin/attach forecast-api-1
 ```
 
 3. trigger an action to run the code
