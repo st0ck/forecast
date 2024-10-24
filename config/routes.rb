@@ -13,6 +13,11 @@ Rails.application.routes.draw do
       namespace :geo do
         resources :address, only: %i[index]
       end
+
+      namespace :meteo do
+        resources :forecast, only: %i[create]
+        resources :current_weather, only: %i[create]
+      end
     end
   end
 end

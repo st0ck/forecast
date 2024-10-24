@@ -12,7 +12,7 @@ module JsonResponseHelper
   # @param exception [Exception] the raised exception to handle
   def handle_internal_server_error(exception)
     message = if Rails.env.development?
-      exception.message
+      [exception.message] + exception.backtrace.select { |path| path.match?(/\/app\//) }
     else
       i18n(:internal_error)
     end

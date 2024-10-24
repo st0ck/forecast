@@ -28,6 +28,9 @@ gem 'bootsnap', require: false
 # HTTP client library abstraction layer
 gem 'faraday', '~> 2.12'
 
+# Geospatial indexing system using a hexagonal grid
+gem 'h3', '~> 3.7', '>= 3.7.2'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'debug', platforms: %i[ mri windows ], require: 'debug/prelude'
