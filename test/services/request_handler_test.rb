@@ -81,6 +81,6 @@ class RequestHandlerTest < ActiveSupport::TestCase
 
   test 'random delay range' do
     delay = @request_handler.send(:random_delay)
-    assert delay >= 0.1 && delay <= 0.3, 'Random delay should be between 0.5 and 1.5 seconds'
+    assert delay >= 0.1 && delay <= 0.3, 'Random delay should be between 0.1 and 0.3 seconds'
   end
 end

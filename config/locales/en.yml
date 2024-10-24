@@ -28,7 +28,16 @@
 #       enabled: "ON"
 
 en:
+  meteo:
+    forecast:
+      type_mismatch: Expected an array of weather data
+    weather:
+      type_mismatch: Expected a weather data
   geo:
+    address_list:
+      type_mismatch: Expected an array of address data
+    address:
+      type_mismatch: Expected an address data
     address_lookup_service:
       errors:
         unavailable_service: Address lookup service is unavailable.

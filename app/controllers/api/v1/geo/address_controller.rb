@@ -7,7 +7,7 @@ module Api
             options = { session_id: search_params[:session_id] }
             service = ::Geo::AddressLookupService.new(query: search_params[:q], options: options)
 
-            address_lookup_result = service.search
+            address_lookup_result = service.perform
 
             if address_lookup_result.error
               handle_general_error(error: address_lookup_result.error, status_code: :internal_server_error)

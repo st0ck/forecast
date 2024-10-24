@@ -38,7 +38,7 @@ class Api::V1::Geo::AddressControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should return successful response when data is fetched from service' do
-    Geo::AddressLookupService.any_instance.stubs(:search).returns(BaseResult.new(data: [@address]))
+    Geo::AddressLookupService.any_instance.stubs(:perform).returns(BaseResult.new(data: [@address]))
 
     get api_v1_geo_address_index_url, params: { q: '456 Elm St', session_id: @session_id }
 
@@ -59,7 +59,7 @@ class Api::V1::Geo::AddressControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should handle service error gracefully' do
-    Geo::AddressLookupService.any_instance.stubs(:search).returns(BaseResult.new(error: 'Service error'))
+    Geo::AddressLookupService.any_instance.stubs(:perform).returns(BaseResult.new(error: 'Service error'))
 
     get api_v1_geo_address_index_url, params: { q: @query, session_id: @session_id }
 
@@ -70,7 +70,7 @@ class Api::V1::Geo::AddressControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should handle too many requests error' do
-    Geo::AddressLookupService.any_instance.stubs(:search).raises(Errors::TooManyRequests.new(retry_after: 11))
+    Geo::AddressLookupService.any_instance.stubs(:perform).raises(Errors::TooManyRequests.new(retry_after: 11))
 
     get api_v1_geo_address_index_url, params: { q: @query, session_id: @session_id }
 

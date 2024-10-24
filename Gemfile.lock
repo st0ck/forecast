@@ -95,8 +95,18 @@ GEM
       logger
     faraday-net_http (3.3.0)
       net-http
+    ffi (1.17.0-aarch64-linux-gnu)
+    ffi (1.17.0-arm-linux-gnu)
+    ffi (1.17.0-arm64-darwin)
+    ffi (1.17.0-x86-linux-gnu)
+    ffi (1.17.0-x86_64-darwin)
+    ffi (1.17.0-x86_64-linux-gnu)
     globalid (1.2.1)
       activesupport (>= 6.1)
+    h3 (3.7.2)
+      ffi (~> 1.9)
+      rgeo-geojson (~> 2.1)
+      zeitwerk (~> 2.1)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     io-console (0.7.2)
@@ -122,9 +132,10 @@ GEM
       builder
       minitest (>= 5.0)
       ruby-progressbar
-    mocha (2.4.5)
+    mocha (2.5.0)
       ruby2_keywords (>= 0.0.5)
     msgpack (1.7.3)
+    multi_json (1.15.0)
     net-http (0.4.1)
       uri
     net-imap (0.5.0)
@@ -206,6 +217,10 @@ GEM
     regexp_parser (2.9.2)
     reline (0.5.10)
       io-console (~> 0.5)
+    rgeo (3.0.1)
+    rgeo-geojson (2.2.0)
+      multi_json (~> 1.15)
+      rgeo (>= 1.0.0)
     rubocop (1.67.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -271,6 +286,7 @@ DEPENDENCIES
   connection_pool (~> 2.2, >= 2.2.1)
   debug
   faraday (~> 2.12)
+  h3 (~> 3.7, >= 3.7.2)
   minitest-reporters (~> 1.7, >= 1.7.1)
   mocha (~> 2.4, >= 2.4.5)
   puma (>= 5.0)

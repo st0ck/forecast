@@ -1,8 +1,7 @@
 module Geo
   class AddressLookupService
     CACHE_PREFIX = 'geo:address_lookup'.freeze
-
-    attr_reader :query
+    CACHE_EXPIRATION = 5.minutes
 
     # Initialize the AddressLookupService with a query, options, and optional redis_pool
     # @param query [String] the query to search for an address
@@ -10,76 +9,48 @@ module Geo
     # @param redis_pool [ConnectionPool] Redis connection pool
     def initialize(query:, options:, redis_pool: Rails.application.config.redis_pool)
       @query = query
-      @redis_pool = redis_pool
       @session_id = options[:session_id]
+      cache_handler = CacheHandler.new(
+        cache_key: cache_key,
+        expiration: CACHE_EXPIRATION,
+        redis_pool: redis_pool
+      )
+      @data_fetcher = DataFetcher.new(
+        cache_handler: cache_handler,
+        service: build_service,
+        data_representer: Geo::AddressList
+      )
     end
 
     # Perform the address lookup search
     # @return [BaseResult] contains either cached or fetched data or an error
-    def search
-      return cashed_data if cashed_data.cache_hit
-
-      fetch_from_service
+    def perform
+      @data_fetcher.perform
+    rescue Errors::UnavailableService => ex
+      log_exception(ex)
+      BaseResult.new(error: i18n('.errors.unavailable_service'))
     rescue StandardError => ex
       log_exception(ex)
-      BaseResult.new(error: i18n('.errors.internal_error'))
+      BaseResult.new
     end
 
     private
 
-    # Retrieve the cached data from Redis if available
-    # @return [BaseResult] returns cached addresses wrapped in BaseResult
-    def cashed_data
-      @cashed_data ||= begin
-        cache_key_with_session = cache_key
-
-        cached_value = @redis_pool.with do |redis|
-          redis.get(cache_key_with_session)
-        end
-
-        return BaseResult.new unless cached_value.present?
-
-        addresses = JSON.parse(cached_value).map { |address| Geo::Address.new(**address.symbolize_keys) }
-        BaseResult.new(data: addresses, cache_hit: true)
-      end
-    end
-
-    # Cache the results from the address lookup service
-    # @param results [Array] the results to be cached
-    def cache_results(results)
-      cache_key_with_session = cache_key
-      @redis_pool.with do |redis|
-        redis.set(cache_key_with_session, results.to_json, ex: 5.minutes)
-      end
-    end
-
     # Generate a unique cache key for the query
     # @return [String] the cache key for the query
     def cache_key
-      @cache_key ||= "#{CACHE_PREFIX}:#{Digest::SHA256.hexdigest(query)}"
-    end
-
-    # Fetch address results from the external service
-    # @return [BaseResult] contains the fetched data or an error
-    def fetch_from_service
-      results = service.fetch(query)
-
-      if results.any?
-        cache_results(results)
-        BaseResult.new(data: results)
-      end
-    rescue Errors::UnavailableService => ex
-      log_exception(ex)
-      BaseResult.new(error: i18n('.errors.unavailable_service'))
+      @cache_key ||= "#{CACHE_PREFIX}:#{Digest::SHA256.hexdigest(@query)}"
     end
 
     # Retrieve the external address lookup service instance
-    # @return [Geo::Integrations::BaseAddressLookup] the address lookup service instance
-    def service
-      @service ||= begin
-        request_handler = RequestHandler.new
-        Geo::Integrations::MapboxAddressLookup.new(request_handler, @session_id)
-      end
+    # @return [Integrations::Geo::Mapbox::AddressLookup] the address lookup service instance
+    def build_service
+      request_handler = RequestHandler.new
+      Integrations::Geo::Mapbox::AddressLookup.new(
+        query: @query,
+        session_token: @session_id,
+        request_handler: request_handler
+      )
     end
 
     # Log an exception
