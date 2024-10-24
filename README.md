@@ -2,6 +2,29 @@
 
 Forecast is a weater forcasting service based on the entered address.
 
+DEMO:
+https://github.com/user-attachments/assets/6b164750-fea5-4a68-98da-6b8298321753
+
+[Code challenge requirements and made assumptions](docs/REQUIREMENTS_AND_ASSUMPTIONS.md)
+
+[API description](docs/API_DESCRIPTION.md)
+
+## App data flow
+
+1. User types an address on the frontend, triggering a call to Address Lookup API.
+2. The backend retrieves suggestions using Mapbox API and returns them to the frontend for display.
+
+3. When the user selects an address, the React App makes two parallel API calls to the backend:
+   - Current weather API for current conditions.
+   - A Forecast API for a daily forecast.
+
+4. Backend checks if the data can be retrieved from the cache
+   - If a cache hit occurs, cached data is returned. Cache is stored using H3 geohashing algorithm.
+   - On a cache miss, data is fetched from OpenWeather API.
+
+5. The frontend receives and displays the current weather and the following days forecast.
+Cache status headers (X-Cache-Hit, X-Cache-Age) indicate whether the data was cached.
+
 ## Run project
 
 ```bash
@@ -40,6 +63,16 @@ Every request is hittin nginx first, then based on the path patterns the request
 - requests with paths starting with `/ws` are treated separately and serve only to support hot reload on the frontend side in the development environment
 
 Nginx can serve as a load balancer if more servers specified.
+
+## Testing
+
+```bash
+bin/run api bin/rails test test
+```
+
+## CI
+
+The basic UI and API checks (tests, linters and vulnerability scans) are implemented using GitHub Actions.
 
 ## Debugging
 
