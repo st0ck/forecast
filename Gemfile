@@ -43,7 +43,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'mocha', '~> 2.4', '>= 2.4.5'
+  gem 'mocha', '~> 2.6'
   gem 'shoulda', '~> 4.0'
   gem 'minitest-reporters', '~> 1.7', '>= 1.7.1'
 end
