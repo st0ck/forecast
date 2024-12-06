@@ -43,7 +43,7 @@ jobs:
 
       - name: Cache Node Modules
         id: cache-nodemodules
-        uses: actions/cache@v4.1.2
+        uses: actions/cache@v4.2.0
         env:
           cache-name: cache-nodemodules
         with:
